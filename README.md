@@ -25,5 +25,5 @@ button       | function
   move vouse | turn object
   
   ## How it install:
-  * git clone URL
+  * git clone https://github.com/Andrey0811/simple_editor.git
   * install -r requirements.txt

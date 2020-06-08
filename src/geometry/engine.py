@@ -1,29 +1,75 @@
+from src.geometry import matrix, vertex, face
 import re
 import numpy as np
 from struct import unpack
 
 
-reg = re.compile(r'facet normal *(?P<x_n>.+) (?P<y_n>.+) (?P<z_n>.+)\n.*'
-                 r'\n* *vertex *(?P<x1>.+) (?P<y1>.+) (?P<z1>.+)'
-                 r'\n* *vertex *(?P<x2>.+) (?P<y2>.+) (?P<z2>.+)'
-                 r'\n* *vertex *(?P<x3>.+) (?P<y3>.+) (?P<z3>.+)\n* *endloop\n* *endfacet')
+class engine:
+    global reg
+    reg = re.compile(r'facet normal *(?P<x_n>.+) (?P<y_n>.+) (?P<z_n>.+)\n.*'
+                     r'\n* *vertex *(?P<x1>.+) (?P<y1>.+) (?P<z1>.+)'
+                     r'\n* *vertex *(?P<x2>.+) (?P<y2>.+) (?P<z2>.+)'
+                     r'\n* *vertex *(?P<x3>.+) (?P<y3>.+) (?P<z3>.+)\n* *endloop\n* *endfacet')
 
-reg_light = re.compile(r'v\w* *(?P<x1>.+) (?P<y1>.+) (?P<z1>.+)')
+    global reg_light
+    reg_light = re.compile(r'v\w* *(?P<x1>.+) (?P<y1>.+) (?P<z1>.+)')
 
+    def __init__(self, points, shapes, distance=5, scale=10):
+        self.distance = distance
+        self.scale = scale
+        self.prev_event = []
+        self.add_points(points)
+        self.add_faces(shapes)
+        self.forward_value = 10
+        self.rotation_step = 0.5
+        self.translation_step = 0.5
+        self.scale_mul = 1
 
-class work_with_stl:
+    def add_points(self, points: list):
+        self.points = []
+        for point in points:
+            self.points.append(vertex.Vertex(point))
+
+    def add_faces(self, shapes: list, default_color='gray'):
+        self.shapes = []
+        for shape in shapes:
+            if type(shape[-1]) != str:
+                shape.append(default_color)
+            self.shapes.append(face.Face(shape))
+
+    def rotate(self, axis: int, angle: float):
+        for point in self.points:
+            point.rotate(axis, angle)
+
+    def move(self, x, y, z):
+        mat = matrix.Matrix(4, 4)
+        mat[(0, 0)] = 1
+        mat[(1, 1)] = 1
+        mat[(2, 2)] = 1
+        mat[(3, 3)] = 1
+        mat[(0, 3)] = x
+        mat[(1, 3)] = y
+        mat[(2, 3)] = z
+        for point in self.points:
+            temp = mat.__mul__(point)
+            point.x = temp.x
+            point.y = temp.y
+            point.z = temp.z
+
+    def flatten(self, scale: float, distance: float):
+        for point in self.points:
+            self.x, self.y = point.flatten(scale, distance)
 
     @staticmethod
     def from_stl(name: str):
         points = []
         triangles = []
-        #idx = 0
+        x = open(name, 'r')
         with open(name, 'r') as f:
             lines = f.read()
             list_str = reg.findall(lines)
             print(len(list_str))
             for item in list_str:
-                #idx += 1
                 a = [-1, -1, -1]
                 for i in range(3):
                     temp = [float(item[3 + 3 * i]), float(item[4 + 3 * i]), float(item[5 + 3 * i])]
@@ -40,12 +86,10 @@ class work_with_stl:
                         j += 1
 
                 triangles.append(a)
-                #print(idx)
-
         return points, triangles
 
     @staticmethod
-    def to_stl(points: list, triangles: list, name='file_1.stl', path='example_file.stl/'):
+    def to_stl(points: list, triangles: list, name='file_1.stl', path='samples/'):
         with open(path + name, 'w') as f:
             f.write(f'solid {name}\n')
             for triangle in triangles:
@@ -61,16 +105,16 @@ class work_with_stl:
         with open(name, "rb") as f:
             header = f.read(80)
             count_triangles = unpack('i', f.read(4))[0]
-            record_dtype = np.dtype([
+            record_doc_type = np.dtype([
                 ('Normals', np.float32, (3,)),
                 ('Vertex1', np.float32, (3,)),
                 ('Vertex2', np.float32, (3,)),
                 ('Vertex3', np.float32, (3,)),
                 ('attr', '<i2', (1,)),
             ])
-            data = np.zeros((count_triangles,), dtype=record_dtype)
+            data = np.zeros((count_triangles,), dtype=record_doc_type)
             for i in range(0, count_triangles, 10):
-                d = np.fromfile(f, dtype=record_dtype, count=10)
+                d = np.fromfile(f, dtype=record_doc_type, count=10)
                 data[i:i + len(d)] = d
 
             # можно не запаковывать в точки, а сразу их анализировать, но это не особо время скоратит
@@ -81,9 +125,7 @@ class work_with_stl:
             points = np.hstack(((v1[:, np.newaxis, :]), (v2[:, np.newaxis, :]), (v3[:, np.newaxis, :])))
             points_set = []
             triangles = []
-            idx = 0
             for item in points:
-                idx += 1
                 a = [-1, -1, -1]
                 i = 0
                 for poi in item:
@@ -95,6 +137,4 @@ class work_with_stl:
                     i += 1
 
                 triangles.append(a)
-                print(idx)
-
         return points_set, triangles

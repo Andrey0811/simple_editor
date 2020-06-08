@@ -1,9 +1,8 @@
 import math
-from geometry import vector as v, vertex as vv
+from . import vertex as v
 
 
 class Matrix:
-
     def __init__(self, rows, cols, create_identity=True):
         if rows < 2 or cols < 2:
             raise ValueError('Invalid Matrix')
@@ -88,8 +87,8 @@ class Matrix:
                 return temp
             else:
                 raise ValueError('Invalid Matrix')
-        elif isinstance(right, v.Vector) or isinstance(right, vv.Vertex):
-            temp = v.Vector()
+        elif isinstance(right, v.Vertex):
+            temp = v.Vertex((0, 0, 0))
             add_x = add_y = add_z = 0.0
             if self.rows == self.cols == 4:
                 add_x = self.m[0][3]

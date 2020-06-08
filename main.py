@@ -1,16 +1,16 @@
-from work_with_stl import work_with_stl as tr
-from window import window as w
+from src.geometry import engine as e
+from src import main_gui as w
 
-path = 'example_file.stl/'
-name = 'cube.stl'
+path = 'samples/'
+name = 'Galleon.stl'
 
 # path = 'work_with_stl/'
 # name = 'Bone_Golem.stl'
 
-points, triangles = tr.work_with_stl.from_stl(path + name)
-# points, triangles = tr.work_with_stl.from_binary_stl(path + name)
+points, triangles = e.engine.from_stl(path + name)
+# points, triangles = e.from_binary_stl(path + name)
 
-window = w.window_templ(points, triangles, title=name)
+window = w.MainGui(points, triangles, title=name)
 
 
 def animation():

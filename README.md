@@ -22,7 +22,7 @@ button       | function
   'a'| move the object in left
   's'| move the object in down
   mouse wheel| approach/distance of the object
-  move vouse | turn object
+  move mouse | turn object
   
   ## How it install:
   * git clone https://github.com/Andrey0811/simple_editor.git

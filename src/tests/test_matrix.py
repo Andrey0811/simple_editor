@@ -1,5 +1,5 @@
 import unittest
-from geometry import matrix as m
+from src.geometry import matrix as m
 
 
 class Matrix_Test(unittest.TestCase):
@@ -49,7 +49,7 @@ class Matrix_Test(unittest.TestCase):
 
     def test_get_row(self):
         self.assertRaises(ValueError, self.a.get_row, 10)
-        assert isinstance( self.a.get_row(0), list)
+        assert isinstance(self.a.get_row(0), list)
         assert self.a.get_row(0)[0] == self.a[(0, 0)]
 
     def test_get_col(self):
@@ -59,8 +59,8 @@ class Matrix_Test(unittest.TestCase):
 
     def test_add(self):
         self.assertRaises(ValueError, self.a.__add__, self.c)
-        #assert self.b.__add__(self.c)[(0, 0)] == 6
-        #assert self.b.__add__(self.c)[(0, 1)] == 6
+        # assert self.b.__add__(self.c)[(0, 0)] == 6
+        # assert self.b.__add__(self.c)[(0, 1)] == 6
 
     def test_sub(self):
         self.assertRaises(ValueError, self.a.__add__, self.c)

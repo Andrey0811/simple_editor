@@ -16,7 +16,7 @@ class Vertex:
             new_x = int(((self.y * distance) / (self.z + distance)) * scale)
             new_y = int(((self.x * distance) / (self.z + distance)) * scale)
         except ZeroDivisionError:
-            raise ZeroDivisionError('Division on Zero: must distance != current_z')
+            raise ZeroDivisionError()
         return new_y, new_x
 
     def rotate(self, axis: int, angle: float):
@@ -87,4 +87,3 @@ class Vertex:
             return Vertex((self.y * v.z - self.z * v.y, self.z * v.x - self.x * v.z, self.x * v.y - self.y * v.x))
         else:
             raise TypeError('Cross not with a vector')
-

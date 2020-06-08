@@ -99,7 +99,9 @@ class Matrix:
             temp.z = self.m[2][0] * right.x + self.m[2][1] * right.y + self.m[2][2] * right.z + add_z
 
             if self.rows == self.cols == 4:
-                w = self.m[3][0] * right.x + self.m[3][1] * right.y + self.m[3][2] * right.z + self.m[3][3]
+                w = self.m[3][0] * right.x \
+                    + self.m[3][1] * right.y \
+                    + self.m[3][2] * right.z + self.m[3][3]
                 if w != 1 and w != 0:
                     temp.x /= w
                     temp.y /= w
@@ -172,7 +174,8 @@ class Matrix:
                 if mo.m[col][col] == 0:
                     big = col
                     for row in range(N):
-                        if math.fabs(mo.m[row][col]) > math.fabs(mo.m[big][col]):
+                        if math.fabs(
+                                mo.m[row][col]) > math.fabs(mo.m[big][col]):
                             big = row
                     if big != col:
                         for j in range(N):

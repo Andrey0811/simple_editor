@@ -1,18 +1,22 @@
-import back_app
-import transfer_stl as tr
+from work_with_stl import work_with_stl as tr
+from window import window as w
 
 path = 'example_file.stl/'
-name = 'Galleon.stl'
+name = 'cube.stl'
 
-points, triangles = tr.from_stl(path + name)
+# path = 'work_with_stl/'
+# name = 'Bone_Golem.stl'
 
-app = back_app.Action_3D(points, triangles, title=name)
+points, triangles = tr.work_with_stl.from_stl(path + name)
+# points, triangles = tr.work_with_stl.from_binary_stl(path + name)
+
+window = w.window_templ(points, triangles, title=name)
 
 
 def animation():
-    app.clear()
-    app.update()
-    app.mainloop()
+    window.clear()
+    window.update()
+    window.mainloop()
 
 
 if __name__ == "__main__":
